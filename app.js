@@ -11,6 +11,8 @@ playerDiv.appendChild(player);
 
 var intervalReference = setInterval(incrementTimer, 1000);
 
+
+
 function incrementTimer() {
   timer++;
   timeSpan.innerHTML = timer;
