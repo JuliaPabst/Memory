@@ -1,21 +1,28 @@
 let dinosaursImages = [
-  { name: "anky.jpeg", uncovered: false },
-  { name: "anky.jpeg", uncovered: false },
-  { name: "brachio.jpeg", uncovered: false },
-  { name: "brachio.jpeg", uncovered: false },
-  { name: "ptero.jpeg", uncovered: false },
-  { name: "ptero.jpeg", uncovered: false },
-  { name: "sauro.jpeg", uncovered: false },
-  { name: "sauro.jpeg", uncovered: false },
-  { name: "stego.jpeg", uncovered: false },
-  { name: "stego.jpeg", uncovered: false },
-  { name: "trex.jpeg", uncovered: false },
-  { name: "trex.jpeg", uncovered: false },
-  { name: "trice.jpeg", uncovered: false },
-  { name: "trice.jpeg", uncovered: false },
-  { name: "velo.jpeg", uncovered: false },
-  { name: "velo.jpeg", uncovered: false },
+  { name: "anky.jpeg" },
+  { name: "anky.jpeg" },
+  { name: "brachio.jpeg" },
+  { name: "brachio.jpeg" },
+  { name: "ptero.jpeg" },
+  { name: "ptero.jpeg" },
+  { name: "sauro.jpeg" },
+  { name: "sauro.jpeg" },
+  { name: "stego.jpeg" },
+  { name: "stego.jpeg" },
+  { name: "trex.jpeg" },
+  { name: "trex.jpeg" },
+  { name: "trice.jpeg" },
+  { name: "trice.jpeg" },
+  { name: "velo.jpeg" },
+  { name: "velo.jpeg" },
 ];
+
+let rightChoices = 0;
+let attempts = 0;
+let attemptSpan = document.getElementById("attemptSpan");
+let numberUncovered = 0;
+
+shuffleArray(dinosaursImages);
 
 let firstDinosaur = "";
 let secondDinosaur = "";
@@ -26,11 +33,10 @@ timeSpan.innerHTML = 1;
 let timeDiv = document.getElementById("time");
 timeDiv.appendChild(timeSpan);
 
-/*let player = document.createElement("span");
+let player = document.createElement("span");
 player.innerHTML = prompt("What's your name?");
 let playerDiv = document.getElementById("player");
-playerDiv.appendChild(player); 
-*/
+playerDiv.appendChild(player);
 
 var intervalReference = setInterval(incrementTimer, 1000);
 
@@ -45,13 +51,25 @@ function stopp() {
   clearInterval(intervalReference);
 }
 
+function shuffleArray(array) {
+  let len = array.length,
+    currentIndex;
+  for (currentIndex = len - 1; currentIndex > 0; currentIndex--) {
+    let randIndex = Math.floor(Math.random() * (currentIndex + 1));
+    var temp = array[currentIndex];
+    array[currentIndex] = array[randIndex];
+    array[randIndex] = temp;
+  }
+}
+
 function insertDinosaurs() {
   let counter = 0;
   dinosaursImages.forEach((dino) => {
     let newDinosaur = document.createElement("img");
-    newDinosaur.src = dino.name;
+    newDinosaur.src = "question.jpeg";
     newDinosaur.style = "width: 100%; margin: 0px; padding: 0px;";
-    newDinosaur.class = dino.name;
+    newDinosaur.className = dino.name;
+    newDinosaur.onclick = checkPair;
     if (counter < 4) {
       let currentColumn = document.getElementById("column1");
       currentColumn.appendChild(newDinosaur);
@@ -68,21 +86,59 @@ function insertDinosaurs() {
 
     counter++;
   });
+}
 
-  function checkPair(event) {
-    if (firstDinosaur == "") {
-      firstDinosaur = event.class;
-    } else if (firstDinosaur == "") {
-      secondDinosaur = event.class;
-    }
+function checkPair(event) {
+  if (firstDinosaur == "") {
+    firstDinosaur = event.target.className;
+    event.target.src = firstDinosaur;
+    numberUncovered++;
+  } else if (secondDinosaur == "") {
+    secondDinosaur = event.target.className;
+    event.target.src = secondDinosaur;
+    numberUncovered++;
+  }
 
-    if (firstDinosaur == secondDinosaur) {
-      dinosaursImages.forEach((dinosaur) => {
-        if (dinosaur.name == firstDinosaur) {
-          dinosaur.uncovered = true;
-        }
-        event.src = firstDinosaur;
-      });
-    }
+  if (firstDinosaur !== "" && firstDinosaur === secondDinosaur) {
+    dinosaursImages.forEach((dinosaur) => {
+      event.src = firstDinosaur;
+    });
+    firstDinosaur = "";
+    secondDinosaur = "";
+    rightChoices++;
+    attempts++;
+    attemptSpan.innerHTML = attempts;
+  } else if (
+    firstDinosaur !== "" &&
+    secondDinosaur !== "" &&
+    firstDinosaur !== secondDinosaur
+  ) {
+    setTimeout(coverCard, 500, firstDinosaur, secondDinosaur);
+    firstDinosaur = "";
+    secondDinosaur = "";
+    attempts++;
+    attemptSpan.innerHTML = attempts;
+  }
+
+  if (numberUncovered == 2) {
+    firstDinosaur = "";
+    secondDinosaur = "";
+  }
+  if (rightChoices === 8) {
+    setTimeout(() => alert("You won!"), 100); // Delay the alert slightly to ensure UI updates
+  }
+}
+
+function coverCard(firstDinosaur, secondDinosaur) {
+  let elements1 = document.getElementsByClassName(firstDinosaur);
+  for (let i = 0; i < elements1.length; i++) {
+    console.log(elements1[i].className);
+    elements1[i].src = "question.jpeg";
+  }
+
+  let elements2 = document.getElementsByClassName(secondDinosaur);
+  for (let i = 0; i < elements2.length; i++) {
+    console.log(elements2[i].className);
+    elements2[i].src = "question.jpeg";
   }
 }
