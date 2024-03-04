@@ -69,7 +69,7 @@ function insertDinosaurs() {
     newDinosaur.src = "question.jpeg";
     newDinosaur.style = "width: 100%; margin: 0px; padding: 0px;";
     newDinosaur.className = dino.name;
-    newDinosaur.onclick = checkPair;
+    newDinosaur.addEventListener("click", checkPair);
     if (counter < 4) {
       let currentColumn = document.getElementById("column1");
       currentColumn.appendChild(newDinosaur);
@@ -92,6 +92,7 @@ function checkPair(event) {
   if (firstDinosaur == "") {
     firstDinosaur = event.target.className;
     event.target.src = firstDinosaur;
+    event.target.removeEventListener("click", checkPair);
     numberUncovered++;
   } else if (secondDinosaur == "") {
     secondDinosaur = event.target.className;
@@ -100,14 +101,7 @@ function checkPair(event) {
   }
 
   if (firstDinosaur !== "" && firstDinosaur === secondDinosaur) {
-    dinosaursImages.forEach((dinosaur) => {
-      event.src = firstDinosaur;
-    });
-    firstDinosaur = "";
-    secondDinosaur = "";
-    rightChoices++;
-    attempts++;
-    attemptSpan.innerHTML = attempts;
+    setTimeout(win, 500);
   } else if (
     firstDinosaur !== "" &&
     secondDinosaur !== "" &&
@@ -123,9 +117,10 @@ function checkPair(event) {
   if (numberUncovered == 2) {
     firstDinosaur = "";
     secondDinosaur = "";
+    coverCard(firstDinosaur, secondDinosaur);
   }
   if (rightChoices === 8) {
-    setTimeout(() => alert("You won!"), 100); // Delay the alert slightly to ensure UI updates
+    setTimeout(() => alert("You won!"), 100);
   }
 }
 
@@ -134,6 +129,7 @@ function coverCard(firstDinosaur, secondDinosaur) {
   for (let i = 0; i < elements1.length; i++) {
     console.log(elements1[i].className);
     elements1[i].src = "question.jpeg";
+    elements1[i].addEventListener("click", checkPair);
   }
 
   let elements2 = document.getElementsByClassName(secondDinosaur);
@@ -141,4 +137,17 @@ function coverCard(firstDinosaur, secondDinosaur) {
     console.log(elements2[i].className);
     elements2[i].src = "question.jpeg";
   }
+}
+
+function win() {
+  let elements1 = document.getElementsByClassName(firstDinosaur);
+  for (let i = 0; i < elements1.length; i++) {
+    elements1[i].src = "thumbs.jpeg";
+    elements1[i].removeEventListener("click", checkPair);
+  }
+  firstDinosaur = "";
+  secondDinosaur = "";
+  rightChoices++;
+  attempts++;
+  attemptSpan.innerHTML = attempts;
 }
